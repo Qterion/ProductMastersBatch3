@@ -1,5 +1,8 @@
 package Homework.medium;
 
-public class UserRepository {
-
+public class UserRepository extends Repository<UserData> {
+    public UserRepository(
+        MutableDataSource<UserData> cachedDataSource, DataSource<UserData> cloudDataSource) {
+        super(cachedDataSource, cloudDataSource);
+    }
 }
