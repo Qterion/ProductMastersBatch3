@@ -42,6 +42,15 @@ public class TwitterConsoleApp {
           showUserPosts();
           break;
         case 7:
+          addComment();
+          break;
+        case 8:
+          deletePost();
+          break;
+        case 9:
+          viewPostWithComments();
+          break;
+        case 10:
           System.out.println("Выход…");
           return;
         default:
@@ -112,6 +121,36 @@ public class TwitterConsoleApp {
     }
   }
 
+  private void addComment() {
+    System.out.print("Введите ID поста: ");
+    int postId = getIntInput();
+    System.out.print("Введите текст комментария: ");
+    String text = scanner.nextLine().trim();
+    if (twitterService.addComment(postId, currentUser.getName(), text)) {
+      System.out.println("Комментарий добавлен!");
+    } else {
+      System.out.println("Пост с таким ID не найден.");
+    }
+  }
+
+  private void deletePost() {
+    System.out.print("Введите ID поста для удаления: ");
+    int postId = getIntInput();
+    if (twitterService.deletePost(postId, currentUser.getName())) {
+      System.out.println("Пост удален!");
+    } else {
+      System.out.println("Пост с таким ID не найден или вы не являетесь автором.");
+    }
+  }
+
+  private void viewPostWithComments() {
+    System.out.print("Введите ID поста: ");
+    int postId = getIntInput();
+    if (!twitterService.viewPostWithComments(postId)) {
+      System.out.println("Пост с таким ID не найден.");
+    }
+  }
+
   private int getIntInput() {
     int input;
     try {
@@ -131,7 +170,10 @@ public class TwitterConsoleApp {
     System.out.println("4. Показать все посты");
     System.out.println("5. Показать популярные посты");
     System.out.println("6. Показать мои посты");
-    System.out.println("7. Выход");
+    System.out.println("7. Добавить комментарий");
+    System.out.println("8. Удалить пост");
+    System.out.println("9. Показать пост с комментариями");
+    System.out.println("10. Выход");
     System.out.print("Выберите действие: ");
   }
 
