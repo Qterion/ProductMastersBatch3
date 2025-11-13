@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-@Component
+@Component("visaCardPaymentProcessor")
 public class VisaCardPaymentProcessor implements PaymentProcessor {
 
     @Override
