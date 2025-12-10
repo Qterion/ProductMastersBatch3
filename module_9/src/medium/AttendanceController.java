@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import util.DatabaseConnection;
 
 import java.io.IOException;
@@ -30,6 +31,19 @@ public class AttendanceController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("username") == null) {
+            response.sendRedirect("/login");
+            return;
+        }
+        
+        String role = (String) session.getAttribute("role");
+        if (!"ADMIN".equals(role)) {
+            // Students cannot add data
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Only admins can add students");
+            return;
+        }
+        
         String name = request.getParameter("name");
         String groupName = request.getParameter("groupName");
         String isAttendedParam = request.getParameter("isAttended");
@@ -47,6 +61,19 @@ public class AttendanceController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("username") == null) {
+            response.sendRedirect("/login");
+            return;
+        }
+        
+        String role = (String) session.getAttribute("role");
+        String username = (String) session.getAttribute("username");
+        
+        request.setAttribute("role", role);
+        request.setAttribute("username", username);
+        request.setAttribute("isAdmin", "ADMIN".equals(role));
+        
         try {
             request.setAttribute("students", attendanceService.getStudents());
         } catch (SQLException e) {
