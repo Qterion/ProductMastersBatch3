@@ -61,38 +61,25 @@
 
         <body>
             <h1>Student Attendance System</h1>
-            
-            <div style="text-align: right; margin-bottom: 20px;">
-                <span>Logged in as: <strong>${username}</strong> (${role})</span>
-                <a href="/logout" style="margin-left: 15px; color: #d32f2f;">Logout</a>
-            </div>
 
             <div class="info">
                 <strong>Normalized Database:</strong> Groups are stored in a separate table with foreign key
                 relationship.
             </div>
 
-            <c:if test="${isAdmin}">
-                <form method="POST" action="/attendance">
-                    <h2>Add New Student</h2>
-                    <label>Name:</label>
-                    <input type="text" name="name" required><br>
+            <form method="POST" action="/attendance">
+                <h2>Add New Student</h2>
+                <label>Name:</label>
+                <input type="text" name="name" required><br>
 
-                    <label>Group Name:</label>
-                    <input type="text" name="groupName" required><br>
+                <label>Group Name:</label>
+                <input type="text" name="groupName" required><br>
 
-                    <label>Attended:</label>
-                    <input type="checkbox" name="isAttended"><br>
+                <label>Attended:</label>
+                <input type="checkbox" name="isAttended"><br>
 
-                    <button type="submit">Add Student</button>
-                </form>
-            </c:if>
-            
-            <c:if test="${not isAdmin}">
-                <div class="info" style="background-color: #fff3cd; border: 1px solid #ffc107;">
-                    <strong>Student View:</strong> You can view the attendance table but cannot add new entries.
-                </div>
-            </c:if>
+                <button type="submit">Add Student</button>
+            </form>
 
             <h2>Students List</h2>
             <c:if test="${not empty students}">
