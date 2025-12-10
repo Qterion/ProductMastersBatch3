@@ -19,11 +19,11 @@ public class RoleFilter implements Filter {
 
         HttpSession session = req.getSession(false);
 
-        if (!Objects.isNull(session)
-                && "teacher".equalsIgnoreCase((String) session.getAttribute("role"))) {
+        // Allow access for authenticated users (student, teacher, admin)
+        if (!Objects.isNull(session) && session.getAttribute("role") != null) {
             chain.doFilter(request, response);
         } else {
-            resp.getWriter().println("У вас нет доступа к этой странице");
+            resp.sendRedirect("/ServletPractice/login");
         }
     }
 }

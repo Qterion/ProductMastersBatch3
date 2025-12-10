@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Посещение лекций</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4CAF50;
+        }
+        .user-info {
+            text-align: right;
+        }
+        .logout-link {
+            color: #d32f2f;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+        .logout-link:hover {
+            text-decoration: underline;
+        }
+        .info {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .info.warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+        }
+        form {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="text"],
+        select {
+            width: 100%;
+            max-width: 300px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Посещение лекций</h2>
+            <div class="user-info">
+                <span>Вход выполнен: <strong th:text="${username}">User</strong> 
+                      (<span th:text="${isAdmin ? 'ADMIN' : (isStudent ? 'STUDENT' : 'USER')}">Role</span>)</span>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="logout-link" style="background: none; border: none; color: #d32f2f; cursor: pointer; text-decoration: underline; padding: 0; margin-left: 15px;">Выход</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="info">
+            <strong>Spring Boot + Thymeleaf + Spring Security:</strong> 
+            Система учета посещаемости студентов.
+        </div>
+
+        <div sec:authorize="hasRole('STUDENT')" class="info warning">
+            <strong>Вид студента:</strong> Вы можете просматривать таблицу, но не можете добавлять записи.
+        </div>
+
+        <div sec:authorize="hasAnyRole('ADMIN', 'TEACHER')">
+            <form th:action="@{/attendance}" method="post">
+                <h3>Добавить нового студента</h3>
+                <div class="form-group">
+                    <label for="name">ФИО:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="groupName">Группа:</label>
+                    <input type="text" id="groupName" name="groupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="isAttended">Посетил:</label>
+                    <select id="isAttended" name="isAttended">
+                        <option value="true">Да</option>
+                        <option value="false">Нет</option>
+                    </select>
+                </div>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit">Добавить</button>
+            </form>
+        </div>
+
+        <h3>Список студентов</h3>
+        <div th:if="${students != null && !students.isEmpty()}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Группа</th>
+                        <th>Посетил</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="student : ${students}">
+                        <td th:text="${student.name}">Имя</td>
+                        <td th:text="${student.groupName}">Группа</td>
+                        <td th:text="${student.isAttended ? 'Да' : 'Нет'}">Да/Нет</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${students == null || students.isEmpty()}" class="no-data">
+            <h1>Нет данных в таблице</h1>
+        </div>
+    </div>
+</body>
+</html>
+

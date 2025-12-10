@@ -21,7 +21,9 @@ public class SecurityConfiguration {
             throws Exception {
         http.authorizeHttpRequests(auth ->
                         auth.requestMatchers(HttpMethod.GET, "/api/flowers/", "/api/flowers/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/category/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/flowers").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/api/category").hasRole("ADMIN")
                                 .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults());
